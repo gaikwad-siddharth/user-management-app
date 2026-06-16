@@ -4,7 +4,10 @@ import java.util.List;
 import java.util.Random;
 
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import in.siddharth.dto.CityDto;
 import in.siddharth.dto.CountryDto;
@@ -22,18 +25,25 @@ import in.siddharth.repo.StateRepo;
 import in.siddharth.repo.UserRepo;
 
 @Service
+
 public class UserServiceImpl implements UserService {
 	
+	
 	private final EmailService emailService;
-
+	
+	@Autowired
 	private CountryRepo countryRepo;
 	
+	@Autowired
 	private StateRepo stateRepo;
 	
+	@Autowired
 	private CityRepo cityRepo;
 	
+	@Autowired
 	private UserRepo userRepo;
 	
+	@Autowired
 	private ModelMapper mapper;
 
 	UserServiceImpl(EmailService emailService) {
@@ -141,8 +151,12 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public QuoteApiResponseDto getQuote() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		String apiUrl = "https://dummyjson.com/quotes/random";
+		
+		RestTemplate rt = new RestTemplate();
+		ResponseEntity<QuoteApiResponseDto> forEntity = rt.getForEntity(apiUrl, QuoteApiResponseDto.class);
+		return forEntity.getBody();
 	}
 
 }
