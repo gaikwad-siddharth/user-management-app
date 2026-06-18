@@ -8,6 +8,6 @@ import in.siddharth.entity.CityEntity;
 
 public interface CityRepo extends JpaRepository<CityEntity, Integer>{
 	
-	public List<CityEntity> findByCityCityId(Integer cityId);
+	public List<CityEntity> findByStateStateId(Integer stateId);
 
 }

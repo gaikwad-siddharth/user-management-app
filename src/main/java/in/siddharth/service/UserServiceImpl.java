@@ -23,9 +23,10 @@ import in.siddharth.repo.CityRepo;
 import in.siddharth.repo.CountryRepo;
 import in.siddharth.repo.StateRepo;
 import in.siddharth.repo.UserRepo;
+import lombok.RequiredArgsConstructor;
 
 @Service
-
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 	
 	
@@ -46,9 +47,6 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private ModelMapper mapper;
 
-	UserServiceImpl(EmailService emailService) {
-		this.emailService = emailService;
-	}
 	
 	@Override
 	public List<CountryDto> getCountries() {
@@ -69,7 +67,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public List<CityDto> getCities(Integer stateId) {
-		List<CityEntity> cities = cityRepo.findByCityCityId(stateId);
+		List<CityEntity> cities = cityRepo.findByStateStateId(stateId);
 		return cities.stream()
 				.map(city -> mapper.map(city, CityDto.class))
 				.toList();
@@ -89,6 +87,10 @@ public class UserServiceImpl implements UserService {
 		userEntity.setPwd(randomPwd);
 		userEntity.setPwdUpdated("NO");
 		
+		System.out.println("CountryId = " + userDto.getCountryId());
+		System.out.println("StateId = " + userDto.getStateId());
+		System.out.println("CityId = " + userDto.getCityId());
+		
 		CountryEntity countryEntity = countryRepo.findById(userDto.getCountryId()).orElseThrow();
 		StateEntity stateEntity = stateRepo.findById(userDto.getStateId()).orElseThrow();
 		CityEntity cityEntity = cityRepo.findById(userDto.getCityId()).orElseThrow();
@@ -101,7 +103,7 @@ public class UserServiceImpl implements UserService {
 		
 		if(savedUser.getUserId() != null) {
 			String subject = "Your Account Created";
-			String body = "<h1>Your Login Password : </h1>";
+			String body = "<h1>Your Login Password: " + randomPwd + "</h1>";
 			emailService.sendEmail(subject, body, userDto.getEmail());
 			
 			return true;
@@ -145,6 +147,8 @@ public class UserServiceImpl implements UserService {
 		if(userEntity!=null) {
 			userEntity.setPwd(resetPwdDto.getNewPwd());
 			userEntity.setPwdUpdated("YES");
+			userRepo.save(userEntity);   
+			return true;
 		}
 		return false;
 	}
